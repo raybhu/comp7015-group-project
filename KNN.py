@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from datetime import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.pipeline import Pipeline
@@ -49,7 +50,10 @@ cv_scores = cross_val_score(neigh, X_train, y_train, cv=5)
 print(cv_scores)
 X_test_counts = count_vect.transform(X_test)
 X_test = tfidf_transformer.transform(X_test_counts)
+start = datetime.now()
 predicted = neigh.predict(X_test)
+end = datetime.now()
+print((end - start).total_seconds())  # 0.82
 print(confusion_matrix(y_test, predicted))
 print('accuracy_score', accuracy_score(y_test, predicted))
 print('f1_score', f1_score(y_test, predicted))

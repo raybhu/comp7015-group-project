@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from datetime import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.pipeline import Pipeline
@@ -41,10 +42,13 @@ vectorizer = TfidfVectorizer(stop_words='english')
 X_train = vectorizer.fit_transform(X_train)
 svm = svm.SVC(kernel='linear', gamma='auto')
 svm.fit(X_train, y_train)
-X_test = vectorizer.transform(X_test)
-predicted = svm.predict(X_test)
 cv_scores = cross_val_score(svm, X_train, y_train, cv=5)
 print(cv_scores)
+X_test = vectorizer.transform(X_test)
+start = datetime.now()
+predicted = svm.predict(X_test)
+end = datetime.now()
+print((end - start).total_seconds())  # 1.6
 print(confusion_matrix(y_test, predicted))
 print('accuracy_score', accuracy_score(y_test, predicted))
 print('f1_score', f1_score(y_test, predicted))
