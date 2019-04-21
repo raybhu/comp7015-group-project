@@ -6,8 +6,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score, confusion_matrix, recall_score, f1_score
 from sklearn.model_selection import cross_val_score
+#
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn import svm
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.feature_extraction.text import TfidfTransformer
 
 SPAM = 1
 HAM = 0
@@ -37,14 +39,17 @@ data = pd.DataFrame(result)
 # X: Data y: Tag
 X_train, X_test, y_train, y_test = train_test_split(data['data'], data['type'],
                                                     test_size=TEST_SIZE, random_state=42)
-vectorizer = TfidfVectorizer(stop_words='english')
-X_train = vectorizer.fit_transform(X_train)
-svm = svm.SVC(kernel='linear', gamma='auto')
-svm.fit(X_train, y_train)
-X_test = vectorizer.transform(X_test)
-predicted = svm.predict(X_test)
-cv_scores = cross_val_score(svm, X_train, y_train, cv=5)
+count_vect = CountVectorizer()
+X_train_counts = count_vect.fit_transform(X_train)
+tfidf_transformer = TfidfTransformer()
+X_train = tfidf_transformer.fit_transform(X_train_counts)
+neigh = KNeighborsClassifier(n_neighbors=10)
+neigh.fit(X_train, y_train)
+cv_scores = cross_val_score(neigh, X_train, y_train, cv=5)
 print(cv_scores)
+X_test_counts = count_vect.transform(X_test)
+X_test = tfidf_transformer.transform(X_test_counts)
+predicted = neigh.predict(X_test)
 print(confusion_matrix(y_test, predicted))
 print('accuracy_score', accuracy_score(y_test, predicted))
 print('f1_score', f1_score(y_test, predicted))
