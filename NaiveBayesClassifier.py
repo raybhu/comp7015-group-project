@@ -41,12 +41,12 @@ pipeline = Pipeline([
     ('classifier',  MultinomialNB())])
 pipeline.fit(X_train, y_train)
 cv_scores = cross_val_score(pipeline, X_train, y_train, cv=5)
-print(cv_scores)
+print('cross-validation: ', cv_scores)
 start = datetime.now()
 predicted = pipeline.predict(X_test)  # ['spam', 'ham']
 end = datetime.now()
-print((end - start).total_seconds())  # 1.86
-print(confusion_matrix(y_test, predicted))
-print('accuracy_score', accuracy_score(y_test, predicted))
-print('f1_score', f1_score(y_test, predicted))
-print('recall_score', recall_score(y_test, predicted))
+print('time: ', (end - start).total_seconds())  # 1.86
+print('confusion matrix: \n', confusion_matrix(y_test, predicted))
+print('accuracy_score: ', accuracy_score(y_test, predicted))
+print('f1_score: ', f1_score(y_test, predicted))
+print('recall_score: ', recall_score(y_test, predicted))
